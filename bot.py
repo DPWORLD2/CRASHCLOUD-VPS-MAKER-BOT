@@ -483,8 +483,55 @@ async def create_server_task(interaction):
         subprocess.run(["docker", "rm", container_id])
 
 @bot.tree.command(name="deploy", description="Creates a new Instance with Ubuntu 22.04")
-async def deploy_ubuntu(interaction: discord.Interaction):
-    await create_server_task(interaction)
+@app_commands.describe(customer="Mention the customer (@username)")
+async def deploy_ubuntu(interaction: discord.Interaction, customer: discord.Member):
+    await interaction.response.defer()
+
+    # Verify if the customer exists
+    if not customer:
+        await interaction.followup.send(embed=discord.Embed(
+            description=f"### Error: Could not find the customer.",
+            color=0xff0000))
+        return
+
+    userid = str(interaction.user.id)
+    if count_user_servers(userid) >= SERVER_LIMIT:
+        await interaction.followup.send(embed=discord.Embed(
+            description="```Error: Instance Limit-reached```",
+            color=0xff0000))
+        return
+
+    image = "ubuntu-22.04-with-tmate"
+
+    try:
+        container_id = subprocess.check_output([
+            "docker", "run", "-itd", "--privileged", "--hostname", "crashcloud", "--cap-add=ALL", image
+        ]).strip().decode('utf-8')
+
+        exec_cmd = await asyncio.create_subprocess_exec(
+            "docker", "exec", container_id, "tmate", "-F",
+            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        )
+
+        ssh_session_line = await capture_ssh_session_line(exec_cmd)
+        if ssh_session_line:
+            add_to_database(userid, container_id, ssh_session_line)
+            await customer.send(embed=discord.Embed(
+                description=f"### Instance Created\nSSH Session: ```{ssh_session_line}```\nOS: Ubuntu 22.04\nPassword: root",
+                color=0x00ff00
+            ))
+            await interaction.followup.send(embed=discord.Embed(
+                description=f"### Instance created successfully. Details sent to {customer.display_name}.",
+                color=0x00ff00
+            ))
+        else:
+            await interaction.followup.send(embed=discord.Embed(
+                description="### Failed to generate SSH session.",
+                color=0xff0000))
+    except Exception as e:
+        await interaction.followup.send(embed=discord.Embed(
+            description=f"### Error: {e}",
+            color=0xff0000))
 
 #@bot.tree.command(name="deploy-debian", description="Creates a new Instance with Debian 12")
 #async def deploy_ubuntu(interaction: discord.Interaction):
