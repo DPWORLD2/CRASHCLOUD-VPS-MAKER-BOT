@@ -14,7 +14,7 @@ from discord import app_commands
 import requests
 
 # Set Your Bot Token gay
-TOKEN = 'YOUR_BOT_TOKEN'
+TOKEN = 'MTMyMDY4NjQ1ODg0NzIzNjExNw.GHNpjt.YRKN0UXb30mAj12KJpJmjj8qZAQzk-Jx3Uwuk8'
 RAM_LIMIT = '2g' #Set Your Own Ram How Much You Want To Give Your Users
 SERVER_LIMIT = 2 #you can change it!
 database_file = 'database.txt'
@@ -482,7 +482,7 @@ async def create_server_task(interaction):
         subprocess.run(["docker", "kill", container_id])
         subprocess.run(["docker", "rm", container_id])
 
-ALLOWED_ROLE_ID = 123456789012345678  # Replace this with the actual role ID
+ALLOWED_ROLE_ID = 853279989586853908  # Replace this with the actual role ID
 
 @bot.tree.command(name="deploy", description="Creates a new Instance with Ubuntu 22.04")
 async def deploy_ubuntu(interaction: discord.Interaction):
