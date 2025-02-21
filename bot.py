@@ -15,8 +15,8 @@ import requests
 
 # Set Your Bot Token gay
 TOKEN = ''
-RAM_LIMIT = '2g' #Set Your Own Ram How Much You Want To Give Your Users
-SERVER_LIMIT = 2 #you can change it!
+RAM_LIMIT = '8g' #Set Your Own Ram How Much You Want To Give Your Users
+SERVER_LIMIT = 100 #you can change it!
 database_file = 'database.txt'
 
 intents = discord.Intents.default()
@@ -26,7 +26,7 @@ intents.message_content = False
 bot = commands.Bot(command_prefix='/', intents=intents)
 client = docker.from_env()
 
-whitelist_ids = {"1128161197766746213"}  # Replace with actual user IDs
+whitelist_ids = {"853279989586853908"}  # Replace with actual user IDs
 
 # Utility Functions
 def add_to_database(userid, container_name, ssh_command):
@@ -81,7 +81,7 @@ async def capture_ssh_session_line(process):
 
 
 # In-memory database for user credits
-user_credits = {}
+user_credits = {10000}
 
 # Cuty.io API key (Your account key)
 API_KEY = 'ebe681f9e37ef61fcfd756396'
@@ -194,7 +194,7 @@ async def renew(interaction: discord.Interaction, vps_id: str):
     user_credits[user_id] -= 2
 
     # Renew VPS: Add 8 days to the current expiry
-    renewal_date = datetime.now() + timedelta(days=8)
+    renewal_date = datetime.now() + timedelta(days=8000000)
     vps_renewals[vps_id] = renewal_date
 
     # You may also want to log this in a persistent database, not just in memory
@@ -251,7 +251,7 @@ async def capture_ssh_session_line(process):
             return output.split("ssh session:")[1].strip()
     return None
 
-whitelist_ids = {"1128161197766746213"}  # Replace with actual user IDs
+whitelist_ids = {"853279989586853908"}  # Replace with actual user IDs
 
 @bot.tree.command(name="remove-everything", description="Removes all data and containers")
 async def remove_everything(interaction: discord.Interaction):
@@ -430,7 +430,7 @@ async def create_server_task(interaction):
 
     try:
         container_id = subprocess.check_output([
-           "docker", "run", "-itd", "--privileged", "--hostname", "crashcloud", "--cap-add=ALL", image
+           "docker", "run", "-itd", "--privileged", "--hostname", "hyperhost", "--cap-add=ALL", image
         ]).strip().decode('utf-8')
     except subprocess.CalledProcessError as e:
         await interaction.followup.send(embed=discord.Embed(description=f"### Error creating Docker container: {e}", color=0xff0000))
