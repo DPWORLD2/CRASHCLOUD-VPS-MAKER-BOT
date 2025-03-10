@@ -4,7 +4,7 @@ import requests
 import discord
 from discord.ext import commands
 
-TOKEN = "YOUR_DISCORD_BOT_TOKEN"  # Replace with your bot token
+TOKEN = ''# Replace with your bot token
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 
 def get_public_ipv4():
